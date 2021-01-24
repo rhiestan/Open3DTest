@@ -1,5 +1,5 @@
-#ifndef STITCHER_H
-#define STITCHER_H
+#ifndef OPEN3DICPVISUALIZER_H
+#define OPEN3DICPVISUALIZER_H
 
 #include "StitcherI.h"
 
@@ -13,11 +13,11 @@
 /*
  *
  */
-class Stitcher : public StitcherI
+class Open3DICPVisualizer : public StitcherI
 {
 public:
-	Stitcher();
-	virtual ~Stitcher();
+	Open3DICPVisualizer();
+	virtual ~Open3DICPVisualizer();
 
 	virtual void setup();
 
@@ -39,10 +39,6 @@ private:
 	Eigen::Matrix4d pos_;
 
 	std::unique_ptr<open3d::pipelines::integration::ScalableTSDFVolume> volume_;
-
-	std::vector<open3d::geometry::RGBDImage> images_;
-	std::vector<Eigen::Matrix4d> posvec_, transvec_;
-	std::vector<Eigen::Matrix6d> infovec_;
 };
 
 #endif

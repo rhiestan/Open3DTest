@@ -49,10 +49,10 @@ void Stitcher::addNewImage(const open3d::geometry::Image& colorImg, const open3d
 	open3d::camera::PinholeCameraIntrinsic intrinsic = open3d::camera::PinholeCameraIntrinsic(
 		open3d::camera::PinholeCameraIntrinsicParameters::PrimeSenseDefault);
 	//intrinsic.SetIntrinsics(640, 480, 524.0, 524.0, 316.7, 238.5);	// from https://www.researchgate.net/figure/ntrinsic-parameters-of-Kinect-RGB-camera_tbl2_305108995
-	intrinsic.SetIntrinsics(640, 480, 517.3, 516.5, 318.6, 255.3);		// from Freiburg test data set
+	//intrinsic.SetIntrinsics(640, 480, 517.3, 516.5, 318.6, 255.3);		// from Freiburg test data set
 	//intrinsic.SetIntrinsics(640, 480, 537.408, 537.40877, 321.897, 236.29);		// from Calibration of my own camera
 	//intrinsic.SetIntrinsics(640, 480, 533.82, 533.82, 320.55, 232.35);		// from Calibration of my own camera
-	//intrinsic.SetIntrinsics(640, 480, 542.7693, 544.396, 318.79, 239.99);		// from Calibration of my own camera
+	intrinsic.SetIntrinsics(640, 480, 542.7693, 544.396, 318.79, 239.99);		// from Calibration of my own camera
 
 	//open3d::io::WriteImageToPNG("color.png", colorImg_);
 	//open3d::io::WriteImageToPNG("depth.png", depthImg_);

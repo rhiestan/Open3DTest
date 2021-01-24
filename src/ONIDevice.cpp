@@ -93,7 +93,7 @@ bool ONIDevice::connectDevice()
 
 		openni::PixelFormat pixelFormat = videoModeDepth.getPixelFormat();
 
-		std::cout << "Depth mode " << i << " pixel format: " << pixelFormat << std::endl;
+		//std::cout << "Depth mode " << i << " pixel format: " << pixelFormat << std::endl;
 
 		int resX = videoModeDepth.getResolutionX();
 		int resY = videoModeDepth.getResolutionY();

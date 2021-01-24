@@ -1,8 +1,8 @@
 
-#include "open3d/Open3D.h"
-
 #ifndef STITCHERI_H
 #define STITCHERI_H
+
+#include "open3d/Open3D.h"
 
 /*
  *

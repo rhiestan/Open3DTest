@@ -39,6 +39,8 @@
 #include "Stitcher.h"
 #include "OpenCVStitcher.h"
 #include "OpenCVCameraCalibrator.h"
+#include "SaveStreamToDisk.h"
+#include "Open3DICPVisualizer.h"
 
 #include <opencv2/imgcodecs.hpp>
 
@@ -121,16 +123,19 @@ std::vector<std::string> depthFilenames
 
 void scanFolder()
 {
-	Stitcher stitcher;
+	Open3DICPVisualizer stitcher;
+	//Stitcher stitcher;
 	stitcher.setup();
-	stitcher.setDepthScale(5000.0);
+	stitcher.setDepthScale(1000.0);
 	//stitcher.setCameraMatrix();
 
 	cv::Mat color, depth;
 	open3d::geometry::Image colorImg, depthImg;
 
-	boost::filesystem::path colorPath("F:/Projects/libs/Open3D/testdata/rgbd_dataset_freiburg1_360/rgb");
-	boost::filesystem::path depthPath("F:/Projects/libs/Open3D/testdata/rgbd_dataset_freiburg1_360/depth/");
+	//boost::filesystem::path colorPath("F:/Projects/libs/Open3D/testdata/rgbd_dataset_freiburg1_360/rgb");
+	//boost::filesystem::path depthPath("F:/Projects/libs/Open3D/testdata/rgbd_dataset_freiburg1_360/depth/");
+	boost::filesystem::path colorPath("F:/Projects/libs/Open3D/testdata/meins_2pic/rgb");
+	boost::filesystem::path depthPath("F:/Projects/libs/Open3D/testdata/meins_2pic/depth");
 
 	boost::system::error_code ec;
 	boost::filesystem::directory_iterator colorIter(colorPath, ec);
@@ -185,9 +190,10 @@ void scanOpenNI()
 	if (!isOk)
 		std::cout << dev.getLastErrorString() << std::endl;
 
-	Stitcher stitcher;
+	//Stitcher stitcher;
 	//OpenCVStitcher stitcher;
 	//OpenCVCameraCalibrator stitcher;
+	SaveStreamToDisk stitcher;
 	stitcher.setup();
 	stitcher.setDepthScale(1000.0);
 
@@ -221,6 +227,7 @@ void scanOpenNI()
 int main(int argc, char* argv[])
 {
 	scanFolder();
+	//scanOpenNI();
 
 /*	using namespace open3d;
 	camera::PinholeCameraIntrinsic intrinsic = camera::PinholeCameraIntrinsic(

@@ -124,6 +124,11 @@ void ONI3DConverter::newDepthFrame(int frameIndex, int width, int height, int st
 		pX_ = worldX;
 		pY_ = worldY;
 
+		std::cout << "focalX: " << focalX_
+			<< ", focalY:" << focalY_
+			<< ", pX:" << pX_
+			<< ", pY:" << pY_
+			<< std::endl;
 		rc = openni::CoordinateConverter::convertDepthToWorld(
 			*pVS, 1, 0, 1,
 			&worldX, &worldY, &worldZ);

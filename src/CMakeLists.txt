@@ -96,6 +96,8 @@ SET(ALL_SRC ${ALL_SRC} o3drhtest.cpp
 	Stitcher.cpp
 	OpenCVStitcher.cpp
 	OpenCVCameraCalibrator.cpp
+	SaveStreamToDisk.cpp
+	Open3DICPVisualizer.cpp
 )
 
 SET(ALL_HEADERS ${ALL_HEADERS}
@@ -106,6 +108,8 @@ SET(ALL_HEADERS ${ALL_HEADERS}
 	StitcherI.h
 	OpenCVStitcher.h
 	OpenCVCameraCalibrator.h
+	SaveStreamToDisk.h
+	Open3DICPVisualizer.h
 )
 
 ADD_EXECUTABLE(o3drhtest ${ALL_SRC} ${ALL_HEADERS})
