@@ -26,6 +26,8 @@ void Open3DICPVisualizer::addNewImage(const open3d::geometry::Image& colorImg, c
 {
 	std::unique_lock<std::mutex> lock(mutex_);
 
+	open3d::utility::SetVerbosityLevel(open3d::utility::VerbosityLevel::Debug);
+
 	open3d::camera::PinholeCameraIntrinsic intrinsic = open3d::camera::PinholeCameraIntrinsic(
 		open3d::camera::PinholeCameraIntrinsicParameters::PrimeSenseDefault);
 	//intrinsic.SetIntrinsics(640, 480, 524.0, 524.0, 316.7, 238.5);	// from https://www.researchgate.net/figure/ntrinsic-parameters-of-Kinect-RGB-camera_tbl2_305108995
@@ -69,7 +71,7 @@ void Open3DICPVisualizer::addNewImage(const open3d::geometry::Image& colorImg, c
 			open3d::pipelines::odometry::ComputeRGBDOdometry(
 				oldRGBDImage_, *source, intrinsic, odo_init,
 				open3d::pipelines::odometry::RGBDOdometryJacobianFromHybridTerm(),
-				open3d::pipelines::odometry::OdometryOption());
+				open3d::pipelines::odometry::OdometryOption({ 20,10,5 }, 0.1));
 
 		auto ptCloudOld = open3d::geometry::PointCloud::CreateFromDepthImage(oldRGBDImage_.depth_,
 			intrinsic, Eigen::Matrix4d::Identity(), depthScale_);
@@ -78,7 +80,7 @@ void Open3DICPVisualizer::addNewImage(const open3d::geometry::Image& colorImg, c
 		ptCloudOld->EstimateNormals(open3d::geometry::KDTreeSearchParamHybrid(0.1, 30), true);
 		ptCloudNew->EstimateNormals(open3d::geometry::KDTreeSearchParamHybrid(0.1, 30), true);
 
-		double maxCorrDistance = 0.2;
+		double maxCorrDistance = 0.1;
 		std::shared_ptr<open3d::pipelines::registration::RobustKernel> kernel = std::make_shared<open3d::pipelines::registration::TukeyLoss>(0.1);
 		open3d::pipelines::registration::TransformationEstimationPointToPlane p2pl(kernel);
 		auto icpResult = open3d::pipelines::registration::RegistrationICP(*ptCloudOld, *ptCloudNew,
@@ -106,8 +108,8 @@ void Open3DICPVisualizer::addNewImage(const open3d::geometry::Image& colorImg, c
 
 		if (std::get<0>(rgbd_odo))
 		{
-			//Eigen::Matrix4d extrinsic = std::get<1>(rgbd_odo);
-			Eigen::Matrix4d extrinsic = icpResult.transformation_;
+			Eigen::Matrix4d extrinsic = std::get<1>(rgbd_odo);
+			//Eigen::Matrix4d extrinsic = icpResult.transformation_;
 
 			pos_ = extrinsic * pos_;
 			Eigen::Matrix4d posInv = pos_.inverse();
@@ -127,7 +129,7 @@ void Open3DICPVisualizer::addNewImage(const open3d::geometry::Image& colorImg, c
 		pos_ = identity;
 		volume_->Integrate(*source, intrinsic, identity);
 		auto mesh_ptr = volume_->ExtractTriangleMesh();
-		open3d::visualization::DrawGeometries({ mesh_ptr }, "Mesh", 1600, 900);
+		//open3d::visualization::DrawGeometries({ mesh_ptr }, "Mesh", 1600, 900);
 
 	}
 

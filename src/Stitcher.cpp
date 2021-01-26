@@ -85,7 +85,7 @@ void Stitcher::addNewImage(const open3d::geometry::Image& colorImg, const open3d
 			open3d::pipelines::odometry::ComputeRGBDOdometry(
 				oldRGBDImage_, source, intrinsic, odo_init,
 				open3d::pipelines::odometry::RGBDOdometryJacobianFromHybridTerm(),
-				open3d::pipelines::odometry::OdometryOption());
+				open3d::pipelines::odometry::OdometryOption({ 20,10,5 }, 0.1));
 
 		std::cout << "Matching ";
 		if (std::get<0>(rgbd_odo))
@@ -193,7 +193,7 @@ void Stitcher::saveVolume()
 					open3d::pipelines::odometry::ComputeRGBDOdometry(
 						source, target, intrinsic, odo_init,
 						open3d::pipelines::odometry::RGBDOdometryJacobianFromHybridTerm(),
-						open3d::pipelines::odometry::OdometryOption());
+						open3d::pipelines::odometry::OdometryOption({ 20,10,5 }, 0.1));
 				if (std::get<0>(rgbd_odo))	// if success==true
 				{
 					poseGraph.edges_.push_back(open3d::pipelines::registration::PoseGraphEdge(i, j,
