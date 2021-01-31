@@ -9,6 +9,7 @@
 #include <Eigen/Geometry>
 
 #include <open3d/pipelines/registration/GlobalOptimization.h>
+#include <open3d/pipelines/color_map/ColorMapOptimization.h>
 
 Stitcher::Stitcher()
 {
@@ -211,7 +212,7 @@ void Stitcher::saveVolume()
 	open3d::utility::SetVerbosityLevel(open3d::utility::VerbosityLevel::Error);
 
 	// Integrate
-	open3d::pipelines::integration::ScalableTSDFVolume optVolume(4.0 / 512, 0.04, open3d::pipelines::integration::TSDFVolumeColorType::RGB8);
+	open3d::pipelines::integration::ScalableTSDFVolume optVolume(2.0 / 512, 0.04, open3d::pipelines::integration::TSDFVolumeColorType::RGB8);
 
 	for (size_t i = 0; i < poseGraph.nodes_.size(); i++)
 	{
@@ -220,11 +221,39 @@ void Stitcher::saveVolume()
 		optVolume.Integrate(images_[i], intrinsic, poseInv);
 	}
 
+	// Simplify
 	auto optMesh = optVolume.ExtractTriangleMesh();
+	auto simplMesh = optMesh->SimplifyQuadricDecimation(static_cast<int>(optMesh->triangles_.size() / 2), std::numeric_limits<double>::infinity(), 1.0);
 	open3d::io::WriteTriangleMesh("mesh_opt.ply",
-		*optMesh);
+		*simplMesh);
 
 	std::cout << "Optimized mesh saved" << std::endl;
+
+	// Subdivide the mesh to allow for finer color resolution
+	auto subdivMesh = simplMesh->SubdivideLoop(2);
+
+	// Optimize color map
+	open3d::pipelines::color_map::ColorMapOptimizationOption option(true);
+	open3d::camera::PinholeCameraTrajectory camera;
+	for (size_t i = 0; i < poseGraph.nodes_.size(); i++)
+	{
+		auto pose = poseGraph.nodes_[i].pose_;
+		Eigen::Matrix4d poseInv = pose.inverse();
+		open3d::camera::PinholeCameraParameters cameraParams;
+		cameraParams.intrinsic_ = intrinsic;
+		cameraParams.extrinsic_ = poseInv;
+		camera.parameters_.push_back(cameraParams);
+	}
+	open3d::geometry::RGBDImagePyramid rgbdImages;
+	for (const auto& img : images_)
+	{
+		rgbdImages.push_back(std::make_shared<open3d::geometry::RGBDImage>(img));
+	}
+	open3d::pipelines::color_map::ColorMapOptimization(*subdivMesh, rgbdImages, camera, option);
+
+	open3d::io::WriteTriangleMesh("mesh_color_opt.ply",
+		*subdivMesh);
+
 }
 
 void Stitcher::reset()

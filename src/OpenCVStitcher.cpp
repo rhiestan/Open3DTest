@@ -8,6 +8,10 @@
 #include <Eigen/LU>
 
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/core/utility.hpp>
+#include <opencv2/imgproc.hpp>
+
 
 OpenCVStitcher::OpenCVStitcher()
 {
@@ -84,9 +88,12 @@ open3d::geometry::Image OpenCVStitcher::convertCVToO3D(const cv::Mat& cvimg)
 	if (cvimg.channels() == 3)
 	{
 		// Color
-		img.Prepare(cvimg.cols, cvimg.rows, 3, 1);
+		cv::Mat tmpI;
+		cv::cvtColor(cvimg, tmpI, cv::COLOR_RGB2BGR);
+		img.Prepare(tmpI.cols, tmpI.rows, 3, 1);
 		unsigned char* dataPtr = img.PointerAt<unsigned char>(0, 0, 0);
-		memcpy(dataPtr, cvimg.ptr(), 3 * cvimg.cols * cvimg.rows);
+		memcpy(dataPtr, tmpI.ptr(), 3 * tmpI.cols * tmpI.rows);
+
 	}
 	else
 	{
